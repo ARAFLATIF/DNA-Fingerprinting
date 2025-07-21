@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
+const fs = require('fs').promises;
 const { extractColorDNA } = require('./lib/colorAnalysis');
 const { extractSpatialDNA } = require('./lib/spatialAnalysis');
 
@@ -34,6 +35,16 @@ const upload = multer({
         }
     }
 });
+
+// Create uploads directory if it doesn't exist
+async function ensureUploadsDir() {
+    try {
+        await fs.access('./uploads');
+    } catch (error) {
+        await fs.mkdir('./uploads', { recursive: true });
+        console.log('Created uploads directory');
+    }
+}
 
 /**
  * Typography DNA extraction function (demo version with predefined profiles)
@@ -400,9 +411,13 @@ app.get('/api/docs', (req, res) => {
     });
 });
 
-// Serve the main app for all other routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Handle 404 for API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ 
+        error: 'API endpoint not found',
+        path: req.originalUrl,
+        availableEndpoints: ['/api/extract', '/api/health', '/api/docs']
+    });
 });
 
 // Error handling middleware
@@ -430,5 +445,24 @@ app.use((error, req, res, next) => {
     });
 });
 
-// Export the Express app for Vercel
-module.exports = app;
+// Initialize server
+async function startServer() {
+    try {
+        await ensureUploadsDir();
+        
+        app.listen(PORT, () => {
+            console.log(`🚀 DNA Fingerprinting server is running on port ${PORT}`);
+            console.log(`📱 Web Interface: http://localhost:${PORT}`);
+            console.log(`🔍 API Health Check: http://localhost:${PORT}/api/health`);
+            console.log(`📖 API Documentation: http://localhost:${PORT}/api/docs`);
+            console.log(`🧬 Extract DNA: POST http://localhost:${PORT}/api/extract`);
+            console.log(`🎨 Features: Color DNA, Spatial DNA, Typography DNA`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+}
+
+// Start the server
+startServer();
