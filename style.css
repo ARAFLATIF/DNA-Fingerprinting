@@ -1,0 +1,950 @@
+:root {
+    --card-bg-color: #f0f0f0;
+    --card-text-color: #333;
+    --card-accent-color: #007bff;
+    --card-padding: 20px;
+    --card-border-radius: 8px;
+    --card-element-spacing: 15px;
+    --font-heading: 'Georgia', serif;
+    --font-body: 'Helvetica', sans-serif;
+    --font-size-base: 16px;
+    --font-size-h2: 28px;
+    --font-weight-heading: 700;
+    --font-weight-body: 400;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+}
+
+.drop-zone {
+    border: 3px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 60px 40px;
+    margin: 0 auto 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.drop-zone:hover {
+    border-color: #4a5568;
+    background-color: #f7fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.drop-zone p {
+    font-size: 1.1rem;
+    color: #718096;
+    pointer-events: none;
+}
+
+/* Loading Spinner */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #4a5568;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error-message {
+    background-color: #fed7d7;
+    color: #c53030;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #feb2b2;
+}
+
+.error-message button {
+    background-color: #c53030;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.error-message button:hover {
+    background-color: #9b2c2c;
+}
+
+/* Success Message */
+.success-message {
+    background-color: #c6f6d5;
+    color: #22543d;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #9ae6b4;
+}
+
+.success-message button {
+    background-color: #22543d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.success-message button:hover {
+    background-color: #1a202c;
+}
+
+#design-canvas {
+    display: none;
+    max-width: 100%;
+    margin: 0 auto 2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#json-output {
+    display: none;
+    background-color: #2d3748;
+    color: #e2e8f0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: left;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    max-height: 600px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* DNA Results Styling */
+.dna-results {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #2d3748;
+}
+
+.dna-results h3 {
+    color: #e2e8f0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.dna-results h4 {
+    color: #4a5568;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #4a5568;
+    padding-bottom: 0.5rem;
+}
+
+.result-section {
+    margin-bottom: 2rem;
+}
+
+/* Color Info */
+.color-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.color-swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.color-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.color-details div {
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+/* Palette Container */
+.palette-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.palette-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.palette-item .color-swatch {
+    width: 50px;
+    height: 50px;
+}
+
+.palette-hex {
+    font-size: 0.7rem;
+    color: #4a5568;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Profiles */
+.profiles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+}
+
+.profile-value {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* Profile Value Colors */
+.profile-value.vibrant { background-color: #c6f6d5; color: #22543d; }
+.profile-value.muted { background-color: #e2e8f0; color: #4a5568; }
+.profile-value.mixed { background-color: #fed7a1; color: #c05621; }
+.profile-value.dark { background-color: #2d3748; color: #e2e8f0; }
+.profile-value.light { background-color: #f7fafc; color: #2d3748; border: 1px solid #e2e8f0; }
+.profile-value.balanced { background-color: #bee3f8; color: #2b6cb0; }
+.profile-value.complementary { background-color: #fbb6ce; color: #b83280; }
+.profile-value.analogous { background-color: #c6f6d5; color: #22543d; }
+.profile-value.triadic { background-color: #faf0e6; color: #c05621; }
+.profile-value.none { background-color: #e2e8f0; color: #4a5568; }
+
+/* JSON Raw Data */
+details {
+    margin-top: 1rem;
+}
+
+summary {
+    cursor: pointer;
+    padding: 8px;
+    background-color: #4a5568;
+    color: #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+summary:hover {
+    background-color: #2d3748;
+}
+
+.json-raw {
+    background-color: #1a202c;
+    color: #e2e8f0;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    overflow-x: auto;
+}
+
+/* Additional styles for enhanced DNA results */
+.summary-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.color-swatch-inline {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.spatial-info {
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.whitespace-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.whitespace-item {
+    background-color: #e2e8f0;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.spatial-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metadata-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.metadata-info div {
+    color: #4a5568;
+}
+
+/* DNA Actions (Export/Import) */
+.dna-actions {
+    display: none;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem auto;
+    flex-wrap: wrap;
+}
+
+.export-dna-btn, .import-dna-label {
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.export-dna-btn:hover, .import-dna-label:hover {
+    background-color: #1a202c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.import-dna-label {
+    position: relative;
+    overflow: hidden;
+}
+
+.import-dna-label input[type="file"] {
+    position: absolute;
+    left: -9999px;
+}
+
+/* Apply DNA Button */
+.apply-dna-btn {
+    display: none;
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 2rem auto;
+    transition: all 0.3s ease;
+}
+
+.apply-dna-btn:hover {
+    background-color: #2d3748;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.apply-dna-btn:active {
+    transform: translateY(0);
+}
+
+/* Target Design Section */
+.target-heading {
+    text-align: center;
+    color: #2c3e50;
+    margin: 3rem 0 2rem 0;
+    font-size: 2rem;
+}
+
+.target-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.design-card {
+    background-color: var(--card-bg-color);
+    color: var(--card-text-color);
+    padding: var(--card-padding);
+    border-radius: var(--card-border-radius);
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.design-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.design-card h2 {
+    color: var(--card-text-color);
+    margin: 0 0 var(--card-element-spacing) 0;
+    font-family: var(--font-heading);
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-heading);
+}
+
+.design-card p {
+    color: var(--card-text-color);
+    margin: 0 0 var(--card-element-spacing) 0;
+    line-height: 1.6;
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-body);
+}
+
+.design-card button {
+    background-color: var(--card-accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--card-border-radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.design-card button:hover {
+    background-color: #0056b3; /* Fallback for color-mix(in srgb, var(--card-accent-color) 85%, black) */
+    transform: translateY(-1px);
+}
+
+.design-card button:active {
+    transform: translateY(0);
+}
+
+/* Visual DNA Fingerprint Section */
+.fingerprint-heading {
+    text-align: center;
+    color: #2c3e50;
+    margin: 3rem 0 2rem 0;
+    font-size: 2rem;
+}
+
+#fingerprint-canvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    min-height: 450px;
+}
+
+#fingerprint-canvas-container canvas {
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.fingerprint-info {
+    text-align: center;
+    margin-top: 1rem;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+/* DNA Comparison Section */
+.comparison-heading {
+    text-align: center;
+    color: #2c3e50;
+    margin: 4rem 0 2rem 0;
+    font-size: 2rem;
+}
+
+.comparison-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: start;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.comparison-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.comparison-side h3 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.comparison-drop-zone {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 40px 20px;
+    width: 250px;
+    height: 150px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.comparison-drop-zone:hover {
+    border-color: #4a5568;
+    background-color: #f7fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-drop-zone p {
+    font-size: 1rem;
+    color: #718096;
+    pointer-events: none;
+    margin: 0;
+}
+
+.comparison-drop-zone.has-image {
+    border-color: #48bb78;
+    background-color: #f0fff4;
+}
+
+.preview-canvas {
+    display: none;
+    max-width: 250px;
+    max-height: 200px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    min-width: 200px;
+}
+
+.compare-btn {
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.compare-btn:hover {
+    background-color: #2d3748;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.compare-btn:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#similarity-score {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.similarity-high {
+    background-color: #c6f6d5 !important;
+    color: #22543d !important;
+    border-color: #9ae6b4 !important;
+}
+
+.similarity-medium {
+    background-color: #fed7a1 !important;
+    color: #c05621 !important;
+    border-color: #f6ad55 !important;
+}
+
+.similarity-low {
+    background-color: #fed7d7 !important;
+    color: #c53030 !important;
+    border-color: #feb2b2 !important;
+}
+
+/* Product Concepts Section */
+.product-concepts-heading {
+    text-align: center;
+    color: #2c3e50;
+    margin: 5rem 0 3rem 0;
+    font-size: 2.5rem;
+    border-top: 2px solid #e2e8f0;
+    padding-top: 3rem;
+}
+
+.product-section {
+    max-width: 1000px;
+    margin: 0 auto 4rem auto;
+    padding: 0 2rem;
+}
+
+.product-section h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* DNA Marketplace */
+.marketplace-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.dna-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.dna-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-fingerprint {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.mock-fingerprint {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: relative;
+    background: radial-gradient(circle, #2d3748 20%, transparent 21%);
+}
+
+.mock-fingerprint::before,
+.mock-fingerprint::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+}
+
+/* Bold Startup Style */
+.bold-startup {
+    background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ff6b6b);
+}
+
+.bold-startup::before {
+    top: 10px;
+    left: 15px;
+    width: 20px;
+    height: 20px;
+    background: #ff6b6b;
+    box-shadow: 0 0 10px #ff6b6b;
+}
+
+/* Elegant Serif Style */
+.elegant-serif {
+    background: conic-gradient(from 0deg, #8b5a3c, #d4b896, #f4e4c1, #e8d5b7, #8b5a3c);
+}
+
+.elegant-serif::before {
+    top: 15px;
+    left: 20px;
+    width: 16px;
+    height: 16px;
+    background: #8b5a3c;
+    box-shadow: 0 0 8px #8b5a3c;
+}
+
+/* Tech Minimal Style */
+.tech-minimal {
+    background: conic-gradient(from 0deg, #2d3748, #4a5568, #718096, #a0aec0, #2d3748);
+}
+
+.tech-minimal::before {
+    top: 20px;
+    left: 25px;
+    width: 12px;
+    height: 12px;
+    background: #4a5568;
+    box-shadow: 0 0 6px #4a5568;
+}
+
+.dna-card h3 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.dna-description {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1.5rem 0;
+    line-height: 1.4;
+}
+
+.download-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Brand DNA Enforcer */
+.enforcer-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e0;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.toggle-input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+.enforcer-description {
+    color: #4a5568;
+    line-height: 1.6;
+    text-align: center;
+    font-size: 0.95rem;
+    margin: 0;
+}
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .drop-zone {
+        padding: 40px 20px;
+    }
+    
+    .drop-zone p {
+        font-size: 1rem;
+    }
+    
+    .color-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .palette-container {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+    
+    .profiles {
+        gap: 8px;
+    }
+    
+    .profile-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

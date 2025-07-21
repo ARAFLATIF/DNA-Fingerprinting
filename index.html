@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design DNA Extractor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/p5@1.7.0/lib/p5.min.js"></script>
+</head>
+<body>
+    <main class="container">
+        <h1>Design DNA Extractor</h1>
+        
+        <div class="drop-zone" id="drop-zone">
+            <input type="file" id="file-input" accept="image/*" hidden>
+            <p>Drag & Drop a Design or Click to Upload</p>
+        </div>
+        
+        <canvas id="design-canvas"></canvas>
+        
+        <pre id="json-output"></pre>
+        
+        <div class="dna-actions">
+            <button class="export-dna-btn" id="export-dna-btn">Export DNA (.json)</button>
+            <label for="import-dna-input" class="import-dna-label">
+                Import DNA
+                <input type="file" id="import-dna-input" accept=".json" hidden>
+            </label>
+        </div>
+        
+        <button class="apply-dna-btn" id="apply-dna-btn">Apply DNA</button>
+        
+        <h2 class="target-heading">Target Design</h2>
+        
+        <div class="target-container">
+            <div class="design-card">
+                <h2>Sample Design Component</h2>
+                <p>This is a sample design component that will be styled using the extracted DNA characteristics from your uploaded image.</p>
+                <button>Learn More</button>
+            </div>
+        </div>
+        
+        <h2 class="fingerprint-heading">Visual DNA Fingerprint</h2>
+        
+        <div id="fingerprint-canvas-container"></div>
+        
+        <h2 class="comparison-heading">DNA Comparison</h2>
+        
+        <div class="comparison-container">
+            <div class="comparison-side">
+                <h3>Design A</h3>
+                <div class="comparison-drop-zone" id="drop-zone-a">
+                    <input type="file" id="file-input-a" accept="image/*" hidden>
+                    <p>Drop Design A Here</p>
+                </div>
+                <canvas id="preview-canvas-a" class="preview-canvas"></canvas>
+            </div>
+            
+            <div class="comparison-middle">
+                <button class="compare-btn" id="compare-btn">Compare DNA</button>
+                <h3 id="similarity-score">Upload two designs to compare</h3>
+            </div>
+            
+            <div class="comparison-side">
+                <h3>Design B</h3>
+                <div class="comparison-drop-zone" id="drop-zone-b">
+                    <input type="file" id="file-input-b" accept="image/*" hidden>
+                    <p>Drop Design B Here</p>
+                </div>
+                <canvas id="preview-canvas-b" class="preview-canvas"></canvas>
+            </div>
+        </div>
+        
+        <h1 class="product-concepts-heading">Product Concepts</h1>
+        
+        <!-- DNA Marketplace Section -->
+        <section class="product-section">
+            <h2>DNA Marketplace</h2>
+            <div class="marketplace-grid">
+                <div class="dna-card">
+                    <div class="card-fingerprint">
+                        <div class="mock-fingerprint bold-startup"></div>
+                    </div>
+                    <h3>Bold Startup</h3>
+                    <p class="dna-description">High contrast, vibrant colors, modern sans-serif</p>
+                    <button class="download-btn">Download DNA</button>
+                </div>
+                
+                <div class="dna-card">
+                    <div class="card-fingerprint">
+                        <div class="mock-fingerprint elegant-serif"></div>
+                    </div>
+                    <h3>Elegant Serif</h3>
+                    <p class="dna-description">Refined typography, balanced spacing, warm tones</p>
+                    <button class="download-btn">Download DNA</button>
+                </div>
+                
+                <div class="dna-card">
+                    <div class="card-fingerprint">
+                        <div class="mock-fingerprint tech-minimal"></div>
+                    </div>
+                    <h3>Tech Minimal</h3>
+                    <p class="dna-description">Clean lines, cool palette, precise spacing</p>
+                    <button class="download-btn">Download DNA</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Brand DNA Enforcer Section -->
+        <section class="product-section">
+            <h2>Brand DNA Enforcer</h2>
+            <div class="enforcer-container">
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <span class="toggle-text">Activate Brand DNA Enforcement</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" class="toggle-input">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                </div>
+                <p class="enforcer-description">
+                    When active, newly uploaded designs will be compared against the master "Elegant Serif" DNA. 
+                    Deviations over 20% will be flagged for review to ensure brand consistency.
+                </p>
+            </div>
+        </section>
+    </main>
+    
+    <script src="client.js"></script>
+</body>
+</html>
